@@ -16,7 +16,7 @@ def get_user_jobs(user: str) -> List[Dict[str, str]]:
 	jobs = []
 	crontab_content = run_crontab_command(user)
 
-	for line in crontab_content.split("/n"):
+	for line in crontab_content.split("\n"):
 		line = line.strip()
 		if line and not line.startswith("#"):
 			parts = line.split(maxsplit=5)
