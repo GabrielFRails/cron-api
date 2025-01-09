@@ -15,8 +15,6 @@ def get_user_cron_jobs(user: str):
         raise HTTPException(status_code=500, detail=str(result))
     return result
 
-CRON_JOBS_DIR = "./"
-
 @app.post("/jobs/create-cron")
 async def create_cron_job(job: CronJob):
 	cron_line = f"\n#Created by cron-api\n{job.schedule} {job.command}\n"
