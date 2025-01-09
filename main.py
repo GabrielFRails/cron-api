@@ -17,18 +17,10 @@ def get_user_cron_jobs(user: str):
 
 @app.post("/jobs/create-cron")
 async def create_cron_job(job: CronJob):
-	cron_line = f"\n#Created by cron-api\n{job.schedule} {job.command}\n"
-	current_crontab = run(["crontab", "-l"], stdout=PIPE, stderr=PIPE, text=True)
-	
-	if current_crontab.returncode == 0:
-		new_crontab = current_crontab.stdout + cron_line
-	else:
-		new_crontab = cron_line  # Caso não haja crontab atual
+    cron_line = f"\n#Created by cron-api\n{job.schedule} {job.command}\n"
+    success, message = add_cron_job(cron_line)
 
-	p = Popen(['crontab', '-'], stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
-	stdout, stderr = p.communicate(input=new_crontab)
-
-	if p.returncode != 0:
-		raise HTTPException(status_code=500, detail=f"Erro ao atualizar crontab: {stderr}")
-	
-	return {"message": "Cron job adicionado com sucesso", "job": job.dict()}
+    if not success:
+        raise HTTPException(status_code=500, detail=message)
+    
+    return {"message": message, "job": job.dict()}
