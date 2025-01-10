@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from subprocess import run, PIPE, Popen
 from typing import List, Dict
 import os
+import uuid
 
 from libapi import *
 from libapidata import *
@@ -17,7 +18,8 @@ def get_user_cron_jobs(user: str):
 
 @app.post("/jobs/create-cron")
 async def create_cron_job(job: CronJob):
-    cron_line = f"\n#Created by cron-api\n{job.schedule} {job.command}\n"
+    cjid = str(uuid.uuid4()).split("-")[0]
+    cron_line = f"\n#Created by cron-api\ncjid:{cjid}\n{job.schedule} {job.command}\n"
     success, message = add_cron_job(cron_line)
 
     if not success:
