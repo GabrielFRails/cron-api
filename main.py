@@ -11,9 +11,10 @@ app = FastAPI()
 
 @app.get("/jobs/user")
 def get_user_cron_jobs(user: str):
-    success, result = api_crontab_get(user)
-    if not success:
-        raise HTTPException(status_code=500, detail=str(result))
+    result = api_crontab_get(user)
+    if not result:
+        error_msg = f"Erro ao ler o crontab do usuário {user}: {result.stderr}"
+        raise HTTPException(status_code=500, detail=error_msg)
     return result
 
 @app.get("/jobs/{user}/{id}")
@@ -21,9 +22,10 @@ def get_cron_job(
     user: str = Path(description="Linux user name"),
     id: str = Path(description="cron job id")
 ):
-    success, result = api_cronjob_get_by_id(user, id)
-    if not success:
-        raise HTTPException(status_code=500, detail=str(result))
+    result = api_cronjob_get_by_id(user, id)
+    if not result:
+        error_msg = f"Erro ao ler o crontab do usuário {user}: {result.stderr}"
+        raise HTTPException(status_code=500, detail=error_msg)
     return result
 
 @app.post("/jobs/create-cron")
