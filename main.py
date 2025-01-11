@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Path
 from subprocess import run, PIPE, Popen
 from typing import List, Dict
 import os
@@ -16,8 +16,11 @@ def get_user_cron_jobs(user: str):
         raise HTTPException(status_code=500, detail=str(result))
     return result
 
-@app.get("/jobs/user/id")
-def get_cron_job(user: str, id: str):
+@app.get("/jobs/{user}/{id}")
+def get_cron_job(
+    user: str = Path(description="Linux user name"),
+    id: str = Path(description="cron job id")
+):
     success, result = api_cronjob_get_by_id(user, id)
     if not success:
         raise HTTPException(status_code=500, detail=str(result))
