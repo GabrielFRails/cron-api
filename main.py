@@ -43,8 +43,9 @@ async def create_cron_job(
 	if not r:
 		raise HTTPException(status_code=500, detail="Erro ao adicionar novo cron job")
 	
-	job['cid'] = cjid
-	return {"message": "Created", "job": job.dict()}
+	dict_job = job.__dict__
+	dict_job['cid'] = cjid
+	return {"message": "Created", "job": dict_job}
 # }
 
 @app.delete("/jobs/delete/{user}/{id}")
