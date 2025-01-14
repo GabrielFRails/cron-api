@@ -46,3 +46,16 @@ async def create_cron_job(
 	job['cid'] = cjid
 	return {"message": "Created", "job": job.dict()}
 # }
+
+@app.delete("/jobs/delete/{user}/{id}")
+def delete_cron_job(
+	user: str = Path(description="Linux user name"),
+	id: str = Path(description="cron job id")
+):
+# {
+	r = api_cronjob_delete(user, id)
+	if not r:
+		raise HTTPException(status_code=500, detail="Erro ao deletar cron job {id}")
+	
+	return Response(status_code=204)
+# }
