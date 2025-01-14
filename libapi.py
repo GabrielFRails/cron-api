@@ -57,8 +57,8 @@ def api_etl_crontab_line_todict(line):
 		"command": command
 	}
 
-def api_cronjob_add(cron_line: str) -> tuple[bool, str]:
-	current_crontab = run(["crontab", "-l"], stdout=PIPE, stderr=PIPE, text=True)
+def api_cronjob_add(user: str, cron_line: str) -> int:
+	current_crontab = run(["crontab", "-l", "-u", user], stdout=PIPE, stderr=PIPE, text=True)
 
 	if current_crontab.returncode == 0:
 		new_crontab = current_crontab.stdout + cron_line
@@ -69,6 +69,7 @@ def api_cronjob_add(cron_line: str) -> tuple[bool, str]:
 	stdout, stderr = p.communicate(input=new_crontab)
 
 	if p.returncode != 0:
-		return False, f"Erro ao atualizar crontab: {stderr}"
-	
-	return True, "Cron job adicionado com sucesso"
+		return 0
+		#return False, f"Erro ao atualizar crontab: {stderr}"
+
+	return 1

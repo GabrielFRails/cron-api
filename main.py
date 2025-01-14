@@ -26,13 +26,17 @@ def get_cron_job(
 		raise HTTPException(status_code=500, detail=error_msg)
 	return result
 
-@app.post("/jobs/create-cron")
-async def create_cron_job(job: CronJob):
+@app.post("/jobs/create/{user}")
+async def create_cron_job(
+    job: CronJob,
+    user: str = Path(description="Linux user name")
+):
 	cjid = str(uuid.uuid4()).split("-")[0]
 	cron_line = f"\n#cjid:{cjid} % Created by cron-api\n{job.schedule} {job.command}\n"
-	success, message = add_cron_job(cron_line)
+	r = api_cronjob_add(user, cron_line)
 
-	if not success:
-		raise HTTPException(status_code=500, detail=message)
+	if not r:
+		raise HTTPException(status_code=500, detail="Erro ao adicionar novo cron job")
 	
+	job['cid'] = cjid
 	return {"message": message, "job": job.dict()}
