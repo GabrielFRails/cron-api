@@ -1,13 +1,16 @@
 from subprocess import run, PIPE
 
 def run_crontab_command(user: str) -> str | int:
+# {
 	try:
 		result = run(['crontab', '-l', '-u', user], stdout=PIPE, stderr=PIPE, text=True, check=True)
 		return result.stdout
 	except:
 		return 0
+# }
 
 def api_crontab_get(user: str) -> list[dict] | int:
+# {
 	crontab_content = run_crontab_command(user)
 	if not crontab_content:
 		return 0
@@ -27,8 +30,10 @@ def api_crontab_get(user: str) -> list[dict] | int:
 			})
 
 	return jobs
+# }
 
 def api_cronjob_get_by_id(user: str, id: str) -> dict | int:
+# {
 	crontab_content = run_crontab_command(user)
 	if not crontab_content:
 		return 0
@@ -48,16 +53,20 @@ def api_cronjob_get_by_id(user: str, id: str) -> dict | int:
 				return job
 
 	return 0
+# }
 
 def api_etl_crontab_line_todict(line):
+# {
 	parts = line.split(maxsplit=5)
 	schedule, command = ' '.join(parts[:5]), parts[5]
 	return {
 		"schedule": schedule,
 		"command": command
 	}
+# }	
 
 def api_cronjob_add(user: str, cron_line: str) -> int:
+# {
 	current_crontab = run(["crontab", "-l", "-u", user], stdout=PIPE, stderr=PIPE, text=True)
 
 	if current_crontab.returncode == 0:
@@ -73,3 +82,4 @@ def api_cronjob_add(user: str, cron_line: str) -> int:
 		#return False, f"Erro ao atualizar crontab: {stderr}"
 
 	return 1
+# }	
