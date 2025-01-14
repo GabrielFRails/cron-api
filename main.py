@@ -44,5 +44,5 @@ async def create_cron_job(
 		raise HTTPException(status_code=500, detail="Erro ao adicionar novo cron job")
 	
 	job['cid'] = cjid
-	return {"message": message, "job": job.dict()}
+	return {"message": "Created", "job": job.dict()}
 # }
