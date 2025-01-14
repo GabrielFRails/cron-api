@@ -117,3 +117,36 @@ def api_cronjob_delete(user, id):
 
 	return 1
 # }
+
+def api_cronjob_update(user, id, updated_cron_job):
+# {
+	crontab_content = run_crontab_command(user)
+	if not crontab_content:
+		return 0
+
+	found = False
+	cron_lines = crontab_content.split("\n")
+	for idx, line in enumerate(cron_lines):
+		line = line.strip()
+		if line and line.startswith("#cjid:"):
+			parts = line.split("%")
+			prefix = parts[0]
+			cjid = prefix.split(":")
+		
+			if cjid == id:
+				cron_lines[idx+1] = updated_cron_job
+				found = True
+				break
+
+	if not found:
+		return -1
+	
+	new_crontab = "\n".join(cron_lines)
+	p = Popen(['crontab', '-'], stdin=PIPE, stdout=PIPE, stderr=PIPE, text=True)
+	stdout, stderr = p.communicate(input=new_crontab)
+
+	if p.returncode != 0:
+		return 0
+
+	return 1
+# }

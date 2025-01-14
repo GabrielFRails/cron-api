@@ -59,3 +59,20 @@ def delete_cron_job(
 	
 	return Response(status_code=204)
 # }
+
+@app.put("/jobs/create/{user}")
+def update_cron_job(
+	job: CronJob,
+	id: str = Path(description="cron job id to be updated"),
+	user: str = Path(description="Linux user name")
+):
+# {
+	updated_cron_job = f"{job.schedule} {job.command}"
+	r = api_cronjob_update(user, id, updated_cron_job)
+
+	if not r:
+		raise HTTPException(status_code=500, detail="Erro ao editar cron job")
+
+	job['cid'] = id
+	return {"message": "Updated", "job": job.dict()}
+# }
