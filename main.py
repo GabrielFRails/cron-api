@@ -12,7 +12,7 @@ def get_user_cron_jobs(user: str):
 # {
 	result = api_crontab_get(user)
 	if not result:
-		error_msg = f"Erro ao ler o crontab do usuário {user}: {result.stderr}"
+		error_msg = f"Erro ao ler o crontab do usuário '{user}'"
 		raise HTTPException(status_code=500, detail=error_msg)
 	return result
 # }

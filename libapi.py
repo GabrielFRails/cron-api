@@ -16,18 +16,16 @@ def api_crontab_get(user: str) -> list[dict] | int:
 		return 0
 
 	jobs = []
-	for line in crontab_content.split("\n"):
+	cron_lines = crontab_content.split("\n")
+	for idx, line in enumerate(cron_lines):
 		line = line.strip()
-		if line and not line.startswith("#"):
-			parts = line.split(maxsplit=5)
-			if len(parts) < 6:
-				return 0
-
-			schedule, command = ' '.join(parts[:5]), parts[5]
-			jobs.append({
-				"schedule": schedule,
-				"command": command
-			})
+		if line and line.startswith("#cjid"):
+			parts = line.split("%")
+			prefix = parts[0]
+			cjid = prefix.split(":")
+			job = api_etl_crontab_line_todict(cron_lines[idx + 1])
+			job['cjid'] = cjid
+			jobs.append(job)
 
 	if not len(jobs):
 		return 0
@@ -61,6 +59,7 @@ def api_cronjob_get_by_id(user: str, id: str) -> dict | int:
 def api_etl_crontab_line_todict(line):
 # {
 	parts = line.split(maxsplit=5)
+	print(parts)
 	schedule, command = ' '.join(parts[:5]), parts[5]
 	return {
 		"schedule": schedule,
