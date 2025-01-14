@@ -3,7 +3,7 @@ from subprocess import run, PIPE
 def run_crontab_command(user: str) -> str | int:
 	try:
 		result = run(['crontab', '-l', '-u', user], stdout=PIPE, stderr=PIPE, text=True, check=True)
-		return True, result.stdout
+		return result.stdout
 	except:
 		return 0
 
@@ -12,7 +12,7 @@ def api_crontab_get(user: str) -> list[dict] | int:
 	if not crontab_content:
 		return 0
 
-	jobs = None
+	jobs = 0
 	for line in crontab_content.split("\n"):
 		line = line.strip()
 		if line and not line.startswith("#"):
