@@ -15,7 +15,7 @@ def api_crontab_get(user: str) -> list[dict] | int:
 	if not crontab_content:
 		return 0
 
-	jobs = 0
+	jobs = []
 	for line in crontab_content.split("\n"):
 		line = line.strip()
 		if line and not line.startswith("#"):
@@ -28,6 +28,9 @@ def api_crontab_get(user: str) -> list[dict] | int:
 				"schedule": schedule,
 				"command": command
 			})
+
+	if not len(jobs):
+		return 0
 
 	return jobs
 # }
